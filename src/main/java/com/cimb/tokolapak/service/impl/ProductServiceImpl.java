@@ -53,9 +53,8 @@ public class ProductServiceImpl implements ProductService {
 	public void deleteProductById(int id) {
 		Optional<Product> findProduct = productRepo.findById(id);
 		
-		if(findProduct == null) {
-			throw new RuntimeException("Product with id "+id + " does not exist");
-		}
+		if (findProduct.toString() == "Optional.empty")
+			throw new RuntimeException("Product with id " + id + " does not exist");
 		this.productRepo.deleteById(id);
 	}
 }

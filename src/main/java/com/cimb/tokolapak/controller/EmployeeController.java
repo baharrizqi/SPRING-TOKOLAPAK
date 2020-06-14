@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ import com.cimb.tokolapak.service.EmployeeService;
 public class EmployeeController {
 	
 	@Autowired
-	private EmployeeRepo employeeRepoo;
+	private EmployeeRepo employeeRepo;
 	
 	@Autowired
 	private EmployeeService employeeService;
@@ -32,12 +33,12 @@ public class EmployeeController {
 	
 	@PostMapping
 	public Employee addEmployee(@RequestBody Employee employee) {
-		return employeeRepoo.save(employee);
+		return employeeRepo.save(employee);
 	}
 	
 	@GetMapping
 	public Iterable<Employee> getEmployees(){
-		return employeeRepoo.findAll();
+		return employeeRepo.findAll();
 	}
 	
 	@DeleteMapping("/address/{id}")
@@ -48,5 +49,9 @@ public class EmployeeController {
 			throw new RuntimeException("Employee Address not found");
 		}
 		employeeService.deleteEmployeeAddress(employeeAddress.get());
+	}
+	@PutMapping
+	public Employee updateEmployeeAdress(@RequestBody Employee employee) {
+		return employeeRepo.save(employee);
 	}
 }

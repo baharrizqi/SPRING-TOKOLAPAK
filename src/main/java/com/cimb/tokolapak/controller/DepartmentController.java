@@ -1,0 +1,42 @@
+package com.cimb.tokolapak.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cimb.tokolapak.dao.DepartmentRepo;
+import com.cimb.tokolapak.entity.Department;
+import com.cimb.tokolapak.service.DepartmentService;
+
+@RestController
+@RequestMapping("/departments")
+public class DepartmentController {
+	
+	@Autowired
+	private DepartmentService departmentService;
+	
+	@Autowired
+	private DepartmentRepo departmentRepo;
+	
+	@GetMapping
+	public Iterable<Department> getDepartments(){
+		return departmentService.getAllDepartments();
+	}
+	
+	@PostMapping
+	public Department addDepartments(@RequestBody Department department) {
+		return departmentService.addDepartments(department);
+	}
+	@DeleteMapping("/{departmentId}")
+	public void deleteDepartment(@PathVariable int departmentId) {
+		// find employee yg memiliki departmentId tsb
+		// putuskan hubungannya
+		
+		departmentRepo.deleteById(departmentId);
+	}
+}

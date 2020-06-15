@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Department {
 	@Id
@@ -20,6 +22,7 @@ public class Department {
 	private String name;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "department",cascade = CascadeType.ALL)
+	@JsonIgnore
 	private Set<Employee> employees; // Set -> Array yg isinya semua unik
 
 	public int getId() {

@@ -1,5 +1,6 @@
 package com.cimb.tokolapak.entity;
 
+import java.util.List;
 //import java.util.List;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class Department {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "department",cascade = CascadeType.ALL)
 	@JsonIgnore
-	private Set<Employee> employees; // Set -> Array yg isinya semua unik
+	private List<Employee> employees; // Set -> Array yg isinya semua unik
 
 	public int getId() {
 		return id;
@@ -41,11 +42,11 @@ public class Department {
 		this.name = name;
 	}
 
-	public Set<Employee> getEmployees() {
+	public List<Employee> getEmployees() {
 		return employees;
 	}
 
-	public void setEmployees(Set<Employee> employees) {
+	public void setEmployees(List<Employee> employees) {
 		this.employees = employees;
 	}
 

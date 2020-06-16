@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cimb.tokolapak.dao.DepartmentRepo;
+import com.cimb.tokolapak.dao.EmployeeRepo;
 import com.cimb.tokolapak.entity.Department;
 import com.cimb.tokolapak.service.DepartmentService;
 
@@ -23,6 +24,9 @@ public class DepartmentController {
 	@Autowired
 	private DepartmentRepo departmentRepo;
 	
+	@Autowired
+	private EmployeeRepo employeeRepo;
+	
 	@GetMapping
 	public Iterable<Department> getDepartments(){
 		return departmentService.getAllDepartments();
@@ -34,9 +38,18 @@ public class DepartmentController {
 	}
 	@DeleteMapping("/{departmentId}")
 	public void deleteDepartment(@PathVariable int departmentId) {
-		// find employee yg memiliki departmentId tsb
-		// putuskan hubungannya
+		Department findDepartment = departmentRepo.findById(departmentId).get();
 		
-		departmentRepo.deleteById(departmentId);
+		findDepartment.getEmployees().forEach(employee -> {
+				employee.setDepartment(null);
+				employeeRepo.save(employee);
+		});
 	}
+//	@DeleteMapping("/{departmentId}")
+//	public void deleteDepartment(@PathVariable int departmentId) {
+//		// find employee yg memiliki departmentId tsb
+//		// putuskan hubungannya
+//		
+//		departmentRepo.deleteById(departmentId);
+//	}
 }

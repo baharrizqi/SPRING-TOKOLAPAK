@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cimb.tokolapak.dao.ProductRepo;
@@ -62,4 +63,13 @@ public class ProductController {
 	public Product getProductByName(@PathVariable String productName) {
 		return productRepo.findByProductName(productName);
 	}
+	
+	@GetMapping("/products/custom")
+	public Iterable<Product> customQueryGet(@RequestParam double minPrice,@RequestParam String productName){
+		return productRepo.findProductByMinPrice(minPrice,productName);
+	}
+//	@GetMapping("/products/custom")
+//	public Iterable<Product> customQueryGet(@RequestParam double maxPrice,@RequestParam String namaProduk){
+//		return productRepo.findProductByMaxPrice(maxPrice,namaProduk);
+//	}
 }

@@ -17,6 +17,15 @@ public class User {
 	private String username;
 //	@JsonIgnore
 	private String password;
+	
+	private String profilePicture;
+	
+	public String getProfilePicture() {
+		return profilePicture;
+	}
+	public void setProfilePicture(String profilePicture) {
+		this.profilePicture = profilePicture;
+	}
 	public int getId() {
 		return id;
 	}

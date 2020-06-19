@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -17,11 +18,18 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.cimb.tokolapak.dao.UserRepo;
+import com.cimb.tokolapak.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
@@ -33,14 +41,21 @@ public class DocumentController {
 	private String uploadPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\images\\";
 //	private Date date = new Date();
 	
+	@Autowired
+	private UserRepo userRepo;
+	
 	@GetMapping("/testing")
 	public void testing() {
 		System.out.println(uploadPath);
 	}
 	
 	@PostMapping
-	public String uploadFile(@RequestParam("file") MultipartFile file) {
+	public String uploadFile(@RequestParam("file") MultipartFile file,@RequestParam("userData")String userString) throws JsonMappingException, JsonProcessingException {
 		Date date = new Date();
+		
+		User user = new ObjectMapper().readValue(userString, User.class);
+		
+		System.out.println("USERNAME: "+ user.getUsername());
 		
 		String fileExtension = file.getContentType().split("/")[1];
 		System.out.println(fileExtension);
@@ -59,10 +74,18 @@ public class DocumentController {
 		}
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/documents/download/").path(fileName).toUriString();
 	
+		user.setProfilePicture(fileDownloadUri);
+
+		userRepo.save(user);
 //		return fileName + " has been uploaded";
 		
 		return fileDownloadUri;
 	}
+	@PostMapping("/login")
+	public User loginWithProfilePicture(@RequestBody User user) {
+		return userRepo.findByUsername(user.getUsername()).get();
+	}
+
 	
 	@GetMapping("/download/{fileName:.+}")
 	public ResponseEntity<Object> downloadFile(@PathVariable String fileName){

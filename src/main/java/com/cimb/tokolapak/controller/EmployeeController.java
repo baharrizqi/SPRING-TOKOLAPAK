@@ -22,6 +22,7 @@ import com.cimb.tokolapak.entity.Employee;
 import com.cimb.tokolapak.entity.EmployeeAddress;
 import com.cimb.tokolapak.entity.Project;
 import com.cimb.tokolapak.service.EmployeeService;
+import com.cimb.tokolapak.util.EmailUtil;
 
 @RestController
 @RequestMapping("/employee")
@@ -43,6 +44,9 @@ public class EmployeeController {
 	@Autowired
 	private ProjectRepo projectRepo;
 	
+	@Autowired
+	private EmailUtil emailUtil;
+	
 	@PostMapping("/department/{departmentId}")
 	public Employee addEmployee(@RequestBody Employee employee,@PathVariable int departmentId) {
 		Department findDepartment = departmentRepo.findById(departmentId).get();
@@ -51,6 +55,7 @@ public class EmployeeController {
 			throw new RuntimeException("Department not found");
 		
 		employee.setDepartment(findDepartment);
+		emailUtil.sendEmail("cimbxpwd@gmail.com", "Registrasi Karyawan", "<h1>Selamat</h1> \nAnda telah bergabung bersama kami! Klik <a href=\"https://www.google.com\">link</a> ini untuk verifikasi email anda");
 		
 		return employeeRepo.save(employee);
 	}

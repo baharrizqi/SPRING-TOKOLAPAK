@@ -44,16 +44,44 @@ public class UserController {
 		System.out.println(user);
 		
 		String encodedPassword = pwEncoder.encode(user.getPassword());
+		String verifyToken = pwEncoder.encode(user.getUsername()+ user.getPassword());
 		
 		user.setPassword(encodedPassword);
+		user.setVerified(false);
+		//Simpan verifyToken di database
+		user.setVerifyToken(verifyToken);
 		
 		User savedUser = userRepo.save(user);
 		savedUser.setPassword(null);
 		
-//		String teks = user.getUsername()+",<h1>Selamat Anda bergabung dengan ID</h1>"+user.getId();
-		this.emailUtil.sendEmail("cimbxpwd@gmail.com", "Verifikasi Registrasi Email", "<h1>Selamat ,"+user.getUsername()+"</h1> \nAnda telah bergabung bersama kami! Klik disini <a href=\"http://localhost:8080/users/edit/"+user.getId()+"\">link</a> ini untuk verifikasi email anda");
+		//	String teks = user.getUsername()+",<h1>Selamat Anda bergabung dengan ID</h1>"+user.getId();
+		// Kirim verifyToken si user ke emailnya user
+		String linkToVerify = "http://localhost:8080/users/verify/" + user.getUsername() + "?token=" + verifyToken;
+			
+		String message = "<h1>Selamat! Registrasi Berhasil</h1>\n";
+		message += "Akun dengan username " + user.getUsername() + " telah terdaftar!\n";
+		message += "Klik <a href=\"" + linkToVerify + "\">link ini</a> untuk verifikasi email anda.";
+		emailUtil.sendEmail(user.getEmail(), "Registrasi Akun", message);
+		
+//		this.emailUtil.sendEmail("cimbxpwd@gmail.com", "Verifikasi Registrasi Email", "<h1>Selamat ,"+user.getUsername()+"</h1> \nAnda telah bergabung bersama kami! Klik disini <a href=\"http://localhost:8080/users/edit/"+user.getId()+"\">link</a> ini untuk verifikasi email anda");
 		
 		return savedUser;
+	}
+	
+	
+	@GetMapping("/verify/{username}")
+	public String verifyUserEmail (@PathVariable String username, @RequestParam String token) {
+		User findUser = userRepo.findByUsername(username).get();
+		
+		if (findUser.getVerifyToken().equals(token)) {
+			findUser.setVerified(true);
+		} else {
+			throw new RuntimeException("Token is invalid");
+		}
+		
+		userRepo.save(findUser);
+		
+		return "Sukses!";
 	}
 	
 	@GetMapping("/edit/{userId}")
@@ -93,14 +121,9 @@ public class UserController {
 	}
 	@PostMapping("/sendEmail")
 	public String sendEmailTesting() {
-		this.emailUtil.sendEmail("cimbxpwd@gmail.com", "Testing Spring Mail", "<h1>Hello World!</h1>  \nApa Kabar? \nSehat?");
+		this.emailUtil.sendEmail("marellaerlinda@gmail.com", "Testing Spring Mail", "<h1>Hello World!</h1>  \nApa Kabar? \nSehat?");
 		return "Email Sent!";
 	}
 	
-//	@PostMapping("/verifikasi")
-//	public String verifikasiEmail() {
-//		this.emailUtil.sendEmail("cimbxpwd@gmail.com", "Verifikasi Registrasi Email", "<h1>Selamat</h1> \nAnda telah bergabung bersama kami! \nApa Kabar? \nSehat?");
-//		
-//	}
 
 }

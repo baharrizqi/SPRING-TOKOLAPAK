@@ -22,6 +22,23 @@ public class User {
 	
 	private boolean isVerified;
 	
+	private String email;
+	private String verifyToken;
+	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getVerifyToken() {
+		return verifyToken;
+	}
+	public void setVerifyToken(String verifyToken) {
+		this.verifyToken = verifyToken;
+	}
+
+	
 	public boolean isVerified() {
 		return isVerified;
 	}

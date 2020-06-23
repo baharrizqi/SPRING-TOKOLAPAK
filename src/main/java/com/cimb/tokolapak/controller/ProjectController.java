@@ -1,5 +1,6 @@
 package com.cimb.tokolapak.controller;
 
+import com.cimb.tokolapak.dao.EmployeeRepo;
 import com.cimb.tokolapak.dao.ProjectRepo;
 import com.cimb.tokolapak.entity.Employee;
 import com.cimb.tokolapak.entity.Project;
@@ -7,6 +8,7 @@ import com.cimb.tokolapak.entity.Project;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,9 @@ public class ProjectController {
     
     @Autowired
     private ProjectRepo projectRepo;
+    
+    @Autowired
+    private EmployeeRepo employeeRepo;
 
     @GetMapping
     public Iterable<Project> getAllProjects(){
@@ -47,5 +52,31 @@ public class ProjectController {
     public Project addProject(@RequestBody Project project){
         return projectRepo.save(project);
     }
+    
+//    @DeleteMapping("/{projectId}")
+//    public void deleteProject(@PathVariable int projectId) {
+//    	Project findProject = projectRepo.findById(projectId).get();
+//    	
+//    	findProject.setEmployees(null);
+//    	
+//    	projectRepo.save(findProject);
+//    	projectRepo.deleteById(projectId);
+//    }
+    
+	@DeleteMapping("/{projectId}")
+	public void deleteProject(@PathVariable int projectId) {
+		Project findProject = projectRepo.findById(projectId).get();
+		
+		findProject.getEmployees().forEach(employee -> {
+			List<Project> employeeProjects = employee.getProjects();
+			employeeProjects.remove(findProject);
+			employeeRepo.save(employee);
+		});
+		
+		findProject.setEmployees(null);
+		
+//		projectRepo.save(findProject);
+		projectRepo.deleteById(projectId);
+	}
 
 }
